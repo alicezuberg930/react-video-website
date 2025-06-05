@@ -4,7 +4,8 @@ import Peer from 'simple-peer'
 
 const SocketContext = createContext()
 
-const socket = io('http://localhost:4000', {})
+// const socket = io('http://localhost:4000', { withCredentials: true })
+const socket = io('https://comic-api-65sp.onrender.com', { withCredentials: true })
 
 export function SocketProvider({ children }) {
     const [localStream, setLocalStream] = useState(null)
@@ -32,7 +33,13 @@ export function SocketProvider({ children }) {
 
     useEffect(() => {
         if (!localStream) {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    width: { min: 640, ideal: 1280, max: 1920 },
+                    height: { min: 360, ideal: 720, max: 1080 },
+                    frameRate: { min: 30, ideal: 45, max: 60 },
+                }
+            }).then((stream) => {
                 setLocalStream(stream)
             })
         }
