@@ -1,24 +1,34 @@
 import logo from './logo.svg';
 import './App.css';
+import { AppBar, Container, Stack, Typography } from '@mui/material';
+import VideoPlayer from './components/VideoPlayer';
+import Options from './components/Options';
+import Notification from './components/Notification';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <Container maxWidth='xl'>
+        <AppBar position='static' color='inherit'
+          sx={{
+            borderRadius: 15,
+            marginY: 6,
+            marginX: 'auto',
+            border: '2px solid grey'
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <Typography variant='h2' align='center'>Video chat</Typography>
+        </AppBar>
+        <Stack justifyContent='center'>
+          {/* Video player */}
+          <VideoPlayer />
+          {/* Call notification */}
+          <Options>
+            <Notification />
+          </Options>
+        </Stack>
+      </Container>
+    </>
   );
 }
 
