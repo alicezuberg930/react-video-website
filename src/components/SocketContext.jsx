@@ -4,8 +4,8 @@ import Peer from 'simple-peer'
 
 const SocketContext = createContext()
 
-// const socket = io('http://localhost:4000', { withCredentials: true })
-const socket = io('https://comic-api-65sp.onrender.com', { withCredentials: true })
+const socket = io('http://localhost:4000', { withCredentials: true })
+// const socket = io('https://comic-api-65sp.onrender.com', { withCredentials: true })
 
 export function SocketProvider({ children }) {
     const [localStream, setLocalStream] = useState(null)

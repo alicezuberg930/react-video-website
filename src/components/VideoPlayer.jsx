@@ -3,6 +3,7 @@ import { Box, IconButton, Paper, Stack } from "@mui/material";
 import { useSocket } from "./SocketContext";
 import { useEffect, useRef } from "react";
 import Iconify from "./iconify";
+import useResponsive from "../hooks/useResponsive";
 
 export default function VideoPlayer() {
     const { callAccepted, callEnded, localStream, remoteStream, leaveCall } = useSocket()
@@ -10,6 +11,10 @@ export default function VideoPlayer() {
     const [cameraOn, setCameraOn] = useState(true)
     const myVideo = useRef()
     const userVideo = useRef()
+    const isDesktop = useResponsive('up', 'lg');
+    const isTablet = useResponsive('up', 'sm');
+    // const isPhone = useResponsive('up', 'xs');
+
 
     useEffect(() => {
         if (myVideo.current) {
@@ -65,7 +70,7 @@ export default function VideoPlayer() {
                         width: '100%',
                         position: 'relative',
                         aspectRatio: '16/9',
-                        width: '400px'
+                        width: isDesktop ? '400px' : isTablet ? '200px' : '100px'
                     }}>
                         <video
                             ref={userVideo} playsInline muted autoPlay
