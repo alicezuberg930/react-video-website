@@ -28,6 +28,8 @@ export default function VideoPlayer() {
         }
     }, [userVideo, remoteStream])
 
+    console.log(localStream ? (localStream.getVideoTracks()) : null)
+
     const toggleMicrophone = useCallback(() => {
         if (localStream) {
             const audioTrack = localStream.getAudioTracks()[0]
@@ -97,7 +99,7 @@ export default function VideoPlayer() {
                     )}
 
                     <IconButton onClick={toggleCamera} color="inherit">
-                        {microphoneOn ? (
+                        {cameraOn ? (
                             <Iconify icon="lucide:camera" width={30} />
                         ) : (
                             <Iconify icon="lucide:camera-off" width={30} />

@@ -38,7 +38,8 @@ export function SocketProvider({ children }) {
                     width: { min: 640, ideal: 1280, max: 1920 },
                     height: { min: 360, ideal: 720, max: 1080 },
                     frameRate: { min: 30, ideal: 45, max: 60 },
-                }
+                },
+                audio: true
             }).then((stream) => {
                 setLocalStream(stream)
             })
