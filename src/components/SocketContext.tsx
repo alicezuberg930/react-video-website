@@ -17,6 +17,7 @@ type SocketContextType = {
 
 const SocketContext = createContext<SocketContextType | null>(null)
 
+// const socket = io('http://localhost:5000')
 const socket = io('https://react-video-website.onrender.com')
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
@@ -88,7 +89,14 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         const peer = new Peer({
             initiator: false,
             trickle: false,
-            stream: localStream!
+            stream: localStream!,
+            config: {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' }
+                ]
+            }
         })
         peer.on('signal', (signal) => {
             socket.emit('answerCall', { signal, to: call!.from })
@@ -105,7 +113,14 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         const peer = new Peer({
             initiator: true,
             trickle: false,
-            stream: localStream!
+            stream: localStream!,
+            config: {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' }
+                ]
+            }
         })
         peer.on('signal', (signal) => {
             socket.emit('callUser', { signal, from: myId, userToCall: userId, name: `User ${myId}` })

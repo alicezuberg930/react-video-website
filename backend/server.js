@@ -12,7 +12,7 @@ app.use(cors());
 // Socket.IO configuration with CORS
 const io = new Server(server, {
     cors: {
-        origin: 'https://react-video-website-ten.vercel.app',
+        origin: ['https://react-video-website-ten.vercel.app', 'http://localhost:3000'],
         methods: ['GET', 'POST'],
         credentials: false
     }
