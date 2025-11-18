@@ -17,15 +17,31 @@ export default function VideoPlayer() {
     // const isPhone = useResponsive('up', 'xs');
 
 
+    // useEffect(() => {
+    //     if (myVideoRef.current && localStream) {
+    //         myVideoRef.current.srcObject = localStream
+    //         myVideoRef.current.muted = true     // 🔴 IMPORTANT
+    //     }
+    // }, [localStream])
+
+    // useEffect(() => {
+    //     if (remoteVideoRef.current && remoteStream) {
+    //         remoteVideoRef.current.srcObject = remoteStream
+    //         remoteVideoRef.current.muted = false  // 🔊 remote audio should play
+    //     }
+    // }, [remoteStream])
+
     useEffect(() => {
         if (myVideo.current) {
             myVideo.current.srcObject = localStream
+            myVideo.current.muted = true
         }
     }, [myVideo, localStream])
 
     useEffect(() => {
         if (userVideo.current) {
             userVideo.current.srcObject = remoteStream
+            userVideo.current.muted = false
         }
     }, [userVideo, remoteStream])
 

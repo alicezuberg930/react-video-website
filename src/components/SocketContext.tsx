@@ -89,6 +89,8 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }, [localStream])
 
     const answerCall = () => {
+        if (!localStream || !call) return
+
         setCallAccepted(true)
         const peer = new Peer({
             initiator: false,
@@ -113,7 +115,11 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }
 
     const callUser = (userId: string) => {
-        console.log(myId)
+        if (!localStream) {
+            console.warn('No localStream yet, cannot call')
+            return
+        }
+        
         const peer = new Peer({
             initiator: true,
             trickle: false,
