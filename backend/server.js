@@ -12,7 +12,7 @@ app.use(cors());
 // Socket.IO configuration with CORS
 const io = new Server(server, {
     cors: {
-        origin: 'https://97ae7d995d48.ngrok-free.app',
+        origin: 'https://react-video-website-ten.vercel.app',
         methods: ['GET', 'POST'],
         credentials: false
     }
