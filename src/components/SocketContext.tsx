@@ -17,8 +17,8 @@ type SocketContextType = {
 
 const SocketContext = createContext<SocketContextType | null>(null)
 
-const socket = io('http://localhost:5000')
-// const socket = io('https://react-video-website.onrender.com')
+// const socket = io('http://localhost:5000')
+const socket = io('https://react-video-website.onrender.com')
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
     const [localStream, setLocalStream] = useState<MediaStream | null>(null)
@@ -119,7 +119,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             console.warn('No localStream yet, cannot call')
             return
         }
-        
+
         const peer = new Peer({
             initiator: true,
             trickle: false,
