@@ -6,6 +6,8 @@ export default function Notification() {
     const { answerCall, call, callAccepted } = useSocket()
     const [isOpen, setIsOpen] = useState(false)
 
+    // console.log({ call, callAccepted })
+
     useEffect(() => {
         if (call?.isReceivedCall && !callAccepted) {
             setIsOpen(true)

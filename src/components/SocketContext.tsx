@@ -24,13 +24,11 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     const [localStream, setLocalStream] = useState<MediaStream | null>(null)
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null)
     const [myId, setMyId] = useState<string>("")
-    const [call, setCall] = useState<{ isReceivedCall: boolean, from: any, signal: any, name: string }>()
+    const [call, setCall] = useState<{ isReceivedCall: boolean, from: any, signal: any, name: string }>({ isReceivedCall: false, from: null, signal: null, name: '' })
     const [callAccepted, setCallAccepted] = useState<boolean>(false)
     const [callEnded, setCallEnded] = useState<boolean>(false)
     const connectionRef = useRef<any>(null)
     // const [socket, setSocket] = useState<any>(null);
-
-    console.log(socket.connected)
 
     useEffect(() => {
 
@@ -44,14 +42,19 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             setCall({ isReceivedCall: true, from: data.from, name: data.name, signal: data.signal })
         }
 
+        const handleLeaveCall = (data: any) => {
+            setCallEnded(true)
+            setCallAccepted(false)
+            setCall(prev => ({ ...prev, isReceivedCall: false, name: '', from: null, signal: null }))
+            connectionRef?.current?.destroy()
+        }
+
         // If socket is already connected, set the ID immediately
         if (socket.connected && socket.id) {
-            console.log('Socket already connected:', socket.id)
             setMyId(socket.id)
         }
 
         socket.on('connect', () => {
-            console.log('Socket connected:', socket.id)
             if (socket.id) {
                 setMyId(socket.id)
             }
@@ -59,11 +62,12 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
         socket.on('connected', handleConnected)
         socket.on('callUser', handleCallUser)
-
+        socket.on('callEnded', handleLeaveCall)
         return () => {
             socket.off('connect')
             socket.off('connected', handleConnected)
             socket.off('callUser', handleCallUser)
+            socket.off('callEnded', handleLeaveCall)
         }
     }, [])
 
@@ -80,7 +84,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
                 audio: {
                     noiseSuppression: true,
                     echoCancellation: true
-
                 }
             }).then((stream) => {
                 setLocalStream(stream)
@@ -90,7 +93,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const answerCall = () => {
         if (!localStream || !call) return
-
         setCallAccepted(true)
         const peer = new Peer({
             initiator: false,
@@ -109,6 +111,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         })
         peer.on('stream', (stream) => {
             setRemoteStream(stream)
+            setCallEnded(false)
         })
         peer.signal(call!.signal)
         connectionRef!.current = peer
@@ -119,7 +122,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             console.warn('No localStream yet, cannot call')
             return
         }
-
         const peer = new Peer({
             initiator: true,
             trickle: false,
@@ -137,6 +139,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         })
         peer.on('stream', (stream) => {
             setRemoteStream(stream)
+            setCallEnded(false)
         })
         socket.on('callAccepted', (data) => {
             setCallAccepted(true)
@@ -149,8 +152,12 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }
 
     const leaveCall = () => {
+        console.log("call from " + call.from)
+        socket.emit('endCall', { to: call.from })
         setCallEnded(true)
-        connectionRef!.current.destroy()
+        setCallAccepted(false)
+        setCall(prev => ({ ...prev, isReceivedCall: false, name: '', from: null, signal: null }))
+        connectionRef?.current?.destroy()
     }
 
     const memoizedValue = {
