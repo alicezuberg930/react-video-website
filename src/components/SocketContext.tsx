@@ -17,8 +17,7 @@ type SocketContextType = {
 
 const SocketContext = createContext<SocketContextType | null>(null)
 
-// const socket = io('http://localhost:4000', { withCredentials: true })
-const socket = io('https://comic-api-65sp.onrender.com', { withCredentials: true })
+const socket = io('http://localhost:5000')
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
     const [localStream, setLocalStream] = useState<MediaStream | null>(null)
@@ -28,21 +27,46 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     const [callAccepted, setCallAccepted] = useState<boolean>(false)
     const [callEnded, setCallEnded] = useState<boolean>(false)
     const connectionRef = useRef<any>(null)
+    // const [socket, setSocket] = useState<any>(null);
+
+    console.log(socket.connected)
 
     useEffect(() => {
-        socket.on('connected', (data) => setMyId(data.socketId))
-        socket.on('callUser', (data) => {
-            console.log(data)
+
+        const handleConnected = (data: any) => {
+            console.log('Connected event received:', data)
+            setMyId(data.socketId)
+        }
+
+        const handleCallUser = (data: any) => {
+            console.log('Call user event received:', data)
             setCall({ isReceivedCall: true, from: data.from, name: data.name, signal: data.signal })
+        }
+
+        // If socket is already connected, set the ID immediately
+        if (socket.connected && socket.id) {
+            console.log('Socket already connected:', socket.id)
+            setMyId(socket.id)
+        }
+
+        socket.on('connect', () => {
+            console.log('Socket connected:', socket.id)
+            if (socket.id) {
+                setMyId(socket.id)
+            }
         })
+
+        socket.on('connected', handleConnected)
+        socket.on('callUser', handleCallUser)
+
         return () => {
-            socket.off('connected', (data) => setMyId(data.socketId))
-            socket.off('callUser', (data) => {
-                console.log(data)
-                setCall({ isReceivedCall: true, from: data.from, name: data.name, signal: data.signal })
-            })
+            socket.off('connect')
+            socket.off('connected', handleConnected)
+            socket.off('callUser', handleCallUser)
         }
     }, [])
+
+    console.log(myId)
 
     useEffect(() => {
         if (!localStream) {
@@ -77,6 +101,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }
 
     const callUser = (userId: string) => {
+        console.log(myId)
         const peer = new Peer({
             initiator: true,
             trickle: false,

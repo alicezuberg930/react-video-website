@@ -1,3 +1,4 @@
+'use client'
 import { useCallback, useState } from "react";
 import { Box, IconButton, Paper, Stack } from "@mui/material";
 import { useSocket } from "./SocketContext";
@@ -27,8 +28,6 @@ export default function VideoPlayer() {
             userVideo.current.srcObject = remoteStream
         }
     }, [userVideo, remoteStream])
-
-    console.log(localStream ? (localStream.getVideoTracks()) : null)
 
     const toggleMicrophone = useCallback(() => {
         if (localStream) {
