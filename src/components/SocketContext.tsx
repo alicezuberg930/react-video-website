@@ -17,8 +17,8 @@ type SocketContextType = {
 
 const SocketContext = createContext<SocketContextType | null>(null)
 
-// const socket = io('http://localhost:5000')
-const socket = io('https://react-video-website.onrender.com')
+const socket = io('http://localhost:5000')
+// const socket = io('https://react-video-website.onrender.com')
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
     const [localStream, setLocalStream] = useState<MediaStream | null>(null)
@@ -77,7 +77,11 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
                     height: { min: 360, ideal: 720, max: 1080 },
                     frameRate: { min: 30, ideal: 45, max: 60 },
                 },
-                audio: true
+                audio: {
+                    noiseSuppression: true,
+                    echoCancellation: true
+
+                }
             }).then((stream) => {
                 setLocalStream(stream)
             })
